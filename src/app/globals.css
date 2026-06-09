@@ -37,3 +37,23 @@ body {
 .animate-rise {
   animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
+
+/* ---- 도구 일러스트(Sketch) 연출 ---- */
+/* 선이 그려지는 효과: 요소에 pathLength=1 + 아래 스타일을 함께 준다 */
+@keyframes sk-draw { to { stroke-dashoffset: 0; } }
+/* 요소가 톡 떠오르며 나타남 */
+@keyframes sk-pop {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
+}
+/* 옆에서 미끄러져 건너옴 (다리 건너기) */
+@keyframes sk-cross {
+  0% { opacity: 0; transform: translateX(-46px); }
+  20% { opacity: 1; }
+  100% { opacity: 1; transform: translateX(46px); }
+}
+/* 은은한 빛 호흡 */
+@keyframes sk-glow {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.06); }
+}

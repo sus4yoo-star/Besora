@@ -2,6 +2,7 @@
 
 import type { RenderedStep } from "@/lib/types";
 import AudioButton from "@/components/AudioButton";
+import Sketch from "@/components/Sketch";
 import { ui } from "@/lib/i18n";
 
 const CARD_BG: Record<string, string> = {
@@ -11,15 +12,6 @@ const CARD_BG: Record<string, string> = {
   parch: "text-ink bg-[radial-gradient(circle_at_32%_20%,#ffffff,#E4DDCC_82%)]",
   green: "text-white bg-[radial-gradient(circle_at_32%_20%,#7FC79A,#357A56_78%)]",
 };
-
-function Sketch({ k }: { k: string | null }) {
-  if (!k) return null;
-  return (
-    <div className="relative mb-5 flex h-24 items-center justify-center text-5xl opacity-90 drop-shadow-lg">
-      {k === "cross" || k === "cross-over" ? "✝" : "◯"}
-    </div>
-  );
-}
 
 export default function StepView({
   step,
