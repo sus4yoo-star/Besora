@@ -1,0 +1,39 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-serif: "Noto Serif KR", serif;
+}
+
+html,
+body {
+  background:
+    radial-gradient(120% 70% at 50% -8%, rgba(227, 178, 60, 0.13), transparent 58%),
+    radial-gradient(100% 55% at 50% 116%, rgba(90, 164, 118, 0.1), transparent 60%),
+    #15121e;
+  background-attachment: fixed;
+  color: #f5f1e8;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.animate-rise {
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}

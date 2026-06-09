@@ -1,0 +1,17 @@
+{
+  "name": "베소라 · Besora",
+  "short_name": "베소라",
+  "description": "온 인류를 향한 기쁜 소식 — 글로벌 선교 전도 어플",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#15121E",
+  "theme_color": "#15121E",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
