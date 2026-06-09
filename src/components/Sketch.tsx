@@ -21,16 +21,17 @@ const C = {
 };
 
 // 선이 그려지는 효과 (요소에 pathLength={1} 함께 부여)
+// 기본 상태는 '보임'(offset 0). 애니메이션이 그 위에 얹힌다 → 동작 줄이기 시에도 그림은 보임.
 const draw = (delay = 0, dur = 0.9): CSSProperties => ({
   strokeDasharray: 1,
-  strokeDashoffset: 1,
-  animation: `sk-draw ${dur}s cubic-bezier(0.4,0,0.2,1) ${delay}s forwards`,
+  strokeDashoffset: 0,
+  animation: `sk-draw ${dur}s cubic-bezier(0.4,0,0.2,1) ${delay}s both`,
 });
-// 톡 떠오르며 등장
+// 톡 떠오르며 등장 (기본 상태 '보임')
 const pop = (delay = 0): CSSProperties => ({
-  opacity: 0,
+  opacity: 1,
   transformOrigin: "center",
-  animation: `sk-pop 0.5s cubic-bezier(0.2,0.7,0.2,1) ${delay}s forwards`,
+  animation: `sk-pop 0.5s cubic-bezier(0.2,0.7,0.2,1) ${delay}s both`,
 });
 
 function Frame({ children }: { children: ReactNode }) {
