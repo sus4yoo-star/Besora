@@ -1,7 +1,18 @@
 // 베소라 서비스워커 — 전도 현장 오프라인 대비 + 배포 즉시 반영
 // 전략: 네트워크 우선(online이면 항상 최신), 실패 시 캐시 폴백(offline 지원)
-const CACHE = "besora-v2";
-const SHELL = ["/", "/setup", "/me", "/manifest.webmanifest", "/icons/icon.svg"];
+const CACHE = "besora-v3";
+const SHELL = [
+  "/",
+  "/setup",
+  "/me",
+  "/present/wordless",
+  "/present/four-laws",
+  "/present/bridge",
+  "/present/three-circles",
+  "/present/romans",
+  "/manifest.webmanifest",
+  "/icons/icon.svg",
+];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).catch(() => {}));
