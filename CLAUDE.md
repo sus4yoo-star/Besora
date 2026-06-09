@@ -22,6 +22,7 @@
 - `src/lib`: content.ts(페처), i18n.ts, types.ts, supabase/client.ts
 - `src/context/LanguageContext.tsx`: myLang(전도자) + seekerLang(상대), localStorage 저장
 - `supabase/schema.sql`(스키마+시드) → 먼저 RUN, 그다음 `supabase/content.sql`(영어/스페인어 추가)
+- **DB 격리**: 모든 베소라 테이블은 전용 `besora` schema 안에 있음(기존 다바르/셀라/만나 `public` 테이블과 충돌 방지). 클라이언트는 `db:{schema:"besora"}`로 접속. 배포 시 Supabase Settings→API→Data API→Exposed schemas 에 `besora` 추가 필수.
 
 ## 지켜야 할 핵심 디자인 결정
 - **두 언어를 항상 함께 한 화면에.** 상대 언어가 주인공(크게), 내 언어는 같은 카드 안 작지만 또렷한 보조. 결단/기도/환영 화면에도 동일 적용 (StepView.tsx, DecisionFlow.tsx 참고).

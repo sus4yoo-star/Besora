@@ -22,9 +22,14 @@
 ## 배포 순서
 
 ### 1. Supabase
-1. supabase.com 에서 프로젝트 사용(기존 것 재사용 가능, 새로 파도 됨)
-2. 좌측 **SQL Editor** → `supabase/schema.sql` 내용을 전부 붙여넣고 **RUN**
-3. **Settings → API** 에서 `Project URL` 과 `anon public` 키 복사
+1. supabase.com 에서 프로젝트 사용 — **기존 프로젝트(예: 다바르)에 그대로 얹어도 됨.**
+   베소라의 모든 테이블은 전용 `besora` schema 안에 격리되어, 기존 `public` 테이블
+   (셀라/만나/다바르)과 절대 충돌하지 않습니다.
+2. 좌측 **SQL Editor** → `supabase/schema.sql` 전체 붙여넣고 **RUN** → 이어서
+   `supabase/content.sql` 전체 붙여넣고 **RUN** (순서 중요, 둘 다 재실행 안전).
+3. ⭐ **Settings → API → Data API → Exposed schemas** 에 **`besora`** 를 추가하고
+   **Save**. (이 단계를 빼먹으면 앱이 DB를 못 읽습니다.)
+4. **Settings → API** 에서 `Project URL` 과 `anon public` 키 복사.
 
 ### 2. GitHub
 1. 새 저장소 생성 (예: `besora`)

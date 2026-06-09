@@ -12,7 +12,10 @@ export function getSupabase(): SupabaseClient {
     );
   }
   _client = createClient(url, key, {
+    // 베소라 테이블은 다바르 등 기존 프로젝트와 충돌하지 않도록
+    // 전용 'besora' schema 안에 격리되어 있다.
+    db: { schema: "besora" },
     auth: { persistSession: true, autoRefreshToken: true },
-  });
+  }) as unknown as SupabaseClient;
   return _client;
 }
