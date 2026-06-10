@@ -8,6 +8,7 @@ import {
   ReactNode,
 } from "react";
 import { fetchLanguages } from "@/lib/content";
+import { SUPPORTED_LANGS } from "@/lib/i18n";
 import type { Language } from "@/lib/types";
 
 type Ctx = {
@@ -31,10 +32,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const m = localStorage.getItem("besora.myLang");
     const s = localStorage.getItem("besora.seekerLang");
-    if (m) setMyLangState(m);
-    if (s) setSeekerLangState(s);
+    // 준비된 언어만 복원 (예전에 고른 미지원 언어는 무시)
+    if (m && SUPPORTED_LANGS.includes(m)) setMyLangState(m);
+    if (s && SUPPORTED_LANGS.includes(s)) setSeekerLangState(s);
     fetchLanguages()
-      .then(setLanguages)
+      .then((langs) => setLanguages(langs.filter((l) => SUPPORTED_LANGS.includes(l.code))))
       .catch(() => setLanguages([]))
       .finally(() => setReady(true));
   }, []);

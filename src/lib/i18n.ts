@@ -1,4 +1,9 @@
 // 앱 UI(버튼/안내) 다국어. 전도 콘텐츠는 DB에 있고, 여기는 화면 골격용.
+
+// 현재 콘텐츠·이름이 준비된 언어 (선택지에 이 언어들만 노출).
+// 셀라 30개 언어 번역이 추가되면 여기에 코드를 더한다.
+export const SUPPORTED_LANGS = ["ko", "en", "es"];
+
 export const UI = {
   ko: {
     appName: "베소라",
