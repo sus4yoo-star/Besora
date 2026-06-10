@@ -116,12 +116,12 @@ function Person({
 }) {
   return (
     <g style={style ?? pop(delay)}>
-      <ellipse cx={x} cy={feet + 3} rx={11} ry={3} fill="#000" opacity={0.18} />
+      <ellipse cx={x} cy={feet + 2} rx={13} ry={3.5} fill="#000" opacity={0.2} />
       <path
-        d={`M${x - 9} ${feet} C ${x - 10} ${feet - 22} ${x + 10} ${feet - 22} ${x + 9} ${feet} Z`}
+        d={`M${x - 11} ${feet} C ${x - 12} ${feet - 27} ${x + 12} ${feet - 27} ${x + 11} ${feet} Z`}
         fill={fill}
       />
-      <circle cx={x} cy={feet - 27} r={6.5} fill={fill} />
+      <circle cx={x} cy={feet - 33} r={8} fill={fill} />
     </g>
   );
 }
@@ -149,32 +149,45 @@ function Cross({
   );
 }
 
-// 좌/우 절벽 (다리예화 공통). gap=깊은 골 강조 여부
+// 좌/우 땅(절벽) — 박스가 아닌 둥근 지면. 가운데는 깊은 골.
 function Cliffs({ leftTop, rightTop }: { leftTop: number; rightTop: number }) {
+  const deeper = Math.max(leftTop, rightTop) + 40;
   return (
     <>
-      {/* 깊은 골 */}
-      <path d={`M92 ${leftTop} L168 ${rightTop} L168 158 L92 158 Z`} fill="url(#g-chasm)" style={pop(0.05)} />
-      {/* 좌 절벽 (사람 편) */}
+      {/* 깊은 골 (가운데 어둠) */}
       <path
-        d={`M10 ${leftTop} L92 ${leftTop} L92 158 L10 158 Z`}
+        d={`M84 ${leftTop + 4} Q130 ${deeper} 176 ${rightTop + 4} L176 160 L84 160 Z`}
+        fill="url(#g-chasm)"
+        style={pop(0.05)}
+      />
+      {/* 좌 땅 (사람 편) */}
+      <path
+        d={`M0 ${leftTop + 16} Q22 ${leftTop} 58 ${leftTop} Q86 ${leftTop} 92 ${leftTop + 12} L92 160 L0 160 Z`}
         fill="url(#g-cliff)"
+      />
+      <path
+        d={`M0 ${leftTop + 16} Q22 ${leftTop} 58 ${leftTop} Q86 ${leftTop} 92 ${leftTop + 12}`}
         stroke="url(#g-parch)"
         strokeWidth={2.5}
+        fill="none"
+        opacity={0.5}
         pathLength={1}
-        style={draw(0.1)}
+        style={draw(0.15)}
       />
-      <line x1={12} y1={leftTop} x2={90} y2={leftTop} stroke="#F5F1E8" strokeWidth={2} opacity={0.4} pathLength={1} style={draw(0.3)} />
-      {/* 우 절벽 (하나님 편, 살짝 높게) */}
+      {/* 우 땅 (하나님 편, 살짝 높게) */}
       <path
-        d={`M168 ${rightTop} L250 ${rightTop} L250 158 L168 158 Z`}
+        d={`M168 ${rightTop + 12} Q174 ${rightTop} 204 ${rightTop} Q240 ${rightTop} 260 ${rightTop + 16} L260 160 L168 160 Z`}
         fill="url(#g-cliff)"
+      />
+      <path
+        d={`M168 ${rightTop + 12} Q174 ${rightTop} 204 ${rightTop} Q240 ${rightTop} 260 ${rightTop + 16}`}
         stroke="url(#g-gold)"
         strokeWidth={2.5}
+        fill="none"
+        opacity={0.6}
         pathLength={1}
-        style={draw(0.25)}
+        style={draw(0.3)}
       />
-      <line x1={170} y1={rightTop} x2={248} y2={rightTop} stroke="#E3B23C" strokeWidth={2} opacity={0.55} pathLength={1} style={draw(0.45)} />
     </>
   );
 }
@@ -259,10 +272,10 @@ export default function Sketch({ k }: { k: string | null }) {
     case "two-sides":
       return (
         <Frame>
-          <Cliffs leftTop={96} rightTop={80} />
-          <Person x={50} feet={96} delay={0.6} />
-          <Halo cx={208} cy={58} r={34} />
-          <Cross cx={208} cy={56} s={0.6} delay={0.7} />
+          <Cliffs leftTop={108} rightTop={94} />
+          <Person x={46} feet={108} delay={0.6} />
+          <Halo cx={212} cy={70} r={34} />
+          <Cross cx={212} cy={70} s={0.64} delay={0.7} />
         </Frame>
       );
 
@@ -270,11 +283,11 @@ export default function Sketch({ k }: { k: string | null }) {
     case "gap":
       return (
         <Frame>
-          <Cliffs leftTop={96} rightTop={80} />
-          <Halo cx={130} cy={130} r={40} id="halo-crimson" style={{ ...glow(2.8) }} />
-          <Person x={50} feet={96} delay={0.6} />
-          <Cross cx={208} cy={56} s={0.6} delay={0.7} />
-          <path d="M122 96 L132 116 L118 130 L130 152" stroke="url(#g-crimson)" strokeWidth={5} filter="url(#soft)" pathLength={1} style={draw(0.7, 0.8)} />
+          <Cliffs leftTop={108} rightTop={94} />
+          <Halo cx={130} cy={140} r={42} id="halo-crimson" style={glow(2.8)} />
+          <Person x={46} feet={108} delay={0.6} />
+          <Cross cx={212} cy={70} s={0.64} delay={0.7} />
+          <path d="M122 110 L132 128 L118 140 L130 160" stroke="url(#g-crimson)" strokeWidth={5} filter="url(#soft)" pathLength={1} style={draw(0.7, 0.8)} />
         </Frame>
       );
 
@@ -282,15 +295,15 @@ export default function Sketch({ k }: { k: string | null }) {
     case "bridge":
       return (
         <Frame>
-          <Cliffs leftTop={90} rightTop={90} />
-          {/* 다리 그림자/반사 */}
-          <path d="M86 86 Q130 70 174 86" stroke="#000" strokeOpacity={0.25} strokeWidth={12} fill="none" style={pop(0.4)} />
-          {/* 십자가 가로보 = 다리 (살짝 아치) */}
-          <path d="M86 82 Q130 66 174 82" stroke="url(#g-gold)" strokeWidth={9} fill="none" filter="url(#soft)" pathLength={1} style={draw(0.5, 0.9)} />
+          <Cliffs leftTop={104} rightTop={104} />
+          {/* 다리 그림자 */}
+          <path d="M82 100 Q130 76 178 100" stroke="#000" strokeOpacity={0.28} strokeWidth={13} fill="none" style={pop(0.4)} />
+          {/* 십자가 가로보 = 다리 (아치) */}
+          <path d="M82 96 Q130 72 178 96" stroke="url(#g-gold)" strokeWidth={9} fill="none" filter="url(#soft)" pathLength={1} style={draw(0.5, 0.95)} />
           {/* 세로기둥 */}
-          <rect x={126} y={40} width={8} height={52} rx={4} fill="url(#g-gold)" filter="url(#soft)" style={pop(1.1)} />
-          {[100, 130, 160].map((x, i) => (
-            <circle key={x} cx={x} cy={i === 1 ? 71 : 75} r={2.4} fill="#FCF3CF" style={{ animation: `sk-twinkle ${2.6 + i * 0.4}s ease-in-out ${1.3 + i * 0.2}s infinite` }} />
+          <rect x={126} y={52} width={8} height={50} rx={4} fill="url(#g-gold)" filter="url(#soft)" style={pop(1.15)} />
+          {[104, 130, 156].map((x, i) => (
+            <circle key={x} cx={x} cy={i === 1 ? 77 : 82} r={2.4} fill="#FCF3CF" style={{ animation: `sk-twinkle ${2.6 + i * 0.4}s ease-in-out ${1.3 + i * 0.2}s infinite` }} />
           ))}
         </Frame>
       );
@@ -299,13 +312,13 @@ export default function Sketch({ k }: { k: string | null }) {
     case "cross-over":
       return (
         <Frame>
-          <Cliffs leftTop={90} rightTop={90} />
-          <path d="M86 82 Q130 66 174 82" stroke="url(#g-gold)" strokeWidth={9} fill="none" filter="url(#soft)" pathLength={1} style={draw(0.3, 0.8)} />
-          <rect x={126} y={40} width={8} height={52} rx={4} fill="url(#g-gold)" filter="url(#soft)" style={pop(0.9)} />
-          <Halo cx={210} cy={70} r={32} id="halo-green" />
-          {/* 건너가는 사람 */}
-          <g style={{ animation: "sk-cross 3.4s cubic-bezier(0.4,0,0.4,1) 1s infinite" }}>
-            <Person x={94} feet={74} fill="url(#g-green)" style={{ opacity: 1 }} />
+          <Cliffs leftTop={104} rightTop={104} />
+          <path d="M82 96 Q130 72 178 96" stroke="url(#g-gold)" strokeWidth={9} fill="none" filter="url(#soft)" pathLength={1} style={draw(0.3, 0.85)} />
+          <rect x={126} y={52} width={8} height={50} rx={4} fill="url(#g-gold)" filter="url(#soft)" style={pop(0.95)} />
+          <Halo cx={214} cy={80} r={32} id="halo-green" />
+          {/* 빛(생명)을 향해 다리를 건너는 사람 */}
+          <g style={{ animation: "sk-cross 3.6s cubic-bezier(0.4,0,0.4,1) 1s infinite" }}>
+            <Person x={130} feet={84} fill="url(#g-green)" style={{ opacity: 1 }} />
           </g>
         </Frame>
       );
