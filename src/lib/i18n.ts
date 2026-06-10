@@ -55,3 +55,38 @@ export function ui(lang: string, key: UIKey): string {
   const l = (lang in UI ? lang : "ko") as UILang;
   return UI[l][key];
 }
+
+// 도구 이름 다국어 (도구는 5개 고정이라 여기서 관리). 없는 언어는 en→ko 폴백.
+export const TOOL_NAMES: Record<string, Record<string, string>> = {
+  wordless: {
+    ko: "글없는책",
+    en: "The Wordless Book",
+    es: "El libro sin palabras",
+  },
+  "four-laws": {
+    ko: "사영리",
+    en: "Four Spiritual Laws",
+    es: "Las cuatro leyes espirituales",
+  },
+  bridge: {
+    ko: "다리 예화",
+    en: "The Bridge to Life",
+    es: "El puente a la vida",
+  },
+  "three-circles": {
+    ko: "세 개의 원",
+    en: "Three Circles",
+    es: "Tres círculos",
+  },
+  romans: {
+    ko: "로마서로의 길",
+    en: "The Romans Road",
+    es: "El camino de Romanos",
+  },
+};
+
+export function toolName(slug: string, lang: string): string {
+  const m = TOOL_NAMES[slug];
+  if (!m) return slug;
+  return m[lang] ?? m.en ?? m.ko ?? slug;
+}
