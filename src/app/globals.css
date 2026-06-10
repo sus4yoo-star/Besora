@@ -60,3 +60,13 @@ body {
   0%, 100% { opacity: 0.35; transform: scale(1); }
   50% { opacity: 0.6; transform: scale(1.06); }
 }
+/* 가볍게 떠오르듯 부유 */
+@keyframes sk-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+/* 빛 입자 반짝임 */
+@keyframes sk-twinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.9; }
+}

@@ -3,124 +3,184 @@
 import type { CSSProperties, ReactNode } from "react";
 
 /**
- * 도구별 도표 일러스트.
- * schema.sql 의 sketch_key 값에 맞춰 그림을 그린다.
+ * 도구별 도표 일러스트 (정교·우아 버전).
+ * schema.sql 의 sketch_key 에 맞춰 그림을 그린다.
  *  - 사영리:   circle · two-circles · cross · throne
  *  - 다리예화: two-sides · gap · bridge · cross-over
  *  - 세개의원: circle · circle-broken · circle-gospel · arrows
- * 선은 그려지듯, 요소는 떠오르듯 등장한다 (prefers-reduced-motion 시 정지).
+ * 그라데이션 + 은은한 빛(글로우) + 선이 그려지는 연출.
+ * 기본 상태는 '보임'이라 동작 줄이기 설정에서도 그림은 유지된다.
  */
 
-const C = {
-  gold: "#E3B23C",
-  crimson: "#C9402F",
-  green: "#5AA476",
-  parch: "#F5F1E8",
-  violet: "#9B8CC4",
-  muted: "#938CA8",
-};
-
 // 선이 그려지는 효과 (요소에 pathLength={1} 함께 부여)
-// 기본 상태는 '보임'(offset 0). 애니메이션이 그 위에 얹힌다 → 동작 줄이기 시에도 그림은 보임.
-const draw = (delay = 0, dur = 0.9): CSSProperties => ({
+const draw = (delay = 0, dur = 1): CSSProperties => ({
   strokeDasharray: 1,
   strokeDashoffset: 0,
-  animation: `sk-draw ${dur}s cubic-bezier(0.4,0,0.2,1) ${delay}s both`,
+  animation: `sk-draw ${dur}s cubic-bezier(0.45,0,0.2,1) ${delay}s both`,
 });
-// 톡 떠오르며 등장 (기본 상태 '보임')
+// 부드럽게 떠오르며 등장 (요소 자기 중심 기준)
 const pop = (delay = 0): CSSProperties => ({
   opacity: 1,
+  transformBox: "fill-box",
   transformOrigin: "center",
-  animation: `sk-pop 0.5s cubic-bezier(0.2,0.7,0.2,1) ${delay}s both`,
+  animation: `sk-pop 0.7s cubic-bezier(0.2,0.7,0.2,1) ${delay}s both`,
 });
+const glow = (dur = 3.6): CSSProperties => ({
+  animation: `sk-glow ${dur}s ease-in-out infinite`,
+});
+
+function Defs() {
+  return (
+    <defs>
+      <linearGradient id="g-gold" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#F9E29B" />
+        <stop offset="1" stopColor="#D29220" />
+      </linearGradient>
+      <linearGradient id="g-green" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#9BDCB4" />
+        <stop offset="1" stopColor="#3A8056" />
+      </linearGradient>
+      <linearGradient id="g-crimson" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#EC6B53" />
+        <stop offset="1" stopColor="#9C2516" />
+      </linearGradient>
+      <linearGradient id="g-parch" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#FCFAF3" />
+        <stop offset="1" stopColor="#CBC1AC" />
+      </linearGradient>
+      <linearGradient id="g-violet" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor="#C5B8E6" />
+        <stop offset="1" stopColor="#7D6CB0" />
+      </linearGradient>
+      <linearGradient id="g-cliff" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#3B3358" />
+        <stop offset="1" stopColor="#1A1629" />
+      </linearGradient>
+      <linearGradient id="g-chasm" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stopColor="#0E0B17" stopOpacity="0.1" />
+        <stop offset="1" stopColor="#000000" stopOpacity="0.85" />
+      </linearGradient>
+      <radialGradient id="halo-gold" cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0" stopColor="#E3B23C" stopOpacity="0.55" />
+        <stop offset="1" stopColor="#E3B23C" stopOpacity="0" />
+      </radialGradient>
+      <radialGradient id="halo-green" cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0" stopColor="#5AA476" stopOpacity="0.5" />
+        <stop offset="1" stopColor="#5AA476" stopOpacity="0" />
+      </radialGradient>
+      <radialGradient id="halo-crimson" cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0" stopColor="#C9402F" stopOpacity="0.4" />
+        <stop offset="1" stopColor="#C9402F" stopOpacity="0" />
+      </radialGradient>
+      <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="2.4" result="b" />
+        <feMerge>
+          <feMergeNode in="b" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+  );
+}
 
 function Frame({ children }: { children: ReactNode }) {
   return (
-    <div className="relative mx-auto mb-6 w-full max-w-[270px]">
+    <div className="relative mx-auto mb-6 w-full max-w-[280px]">
       <svg
-        viewBox="0 0 260 150"
+        viewBox="0 0 260 160"
         className="h-auto w-full overflow-visible"
         fill="none"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
+        <Defs />
         {children}
       </svg>
     </div>
   );
 }
 
-// 작은 사람(전도 대상) 픽토그램
-function Person({ x, y, color }: { x: number; y: number; color: string }) {
+// 우아한 사람 실루엣 (머리 + 망토형 몸)
+function Person({
+  x,
+  feet,
+  fill = "url(#g-parch)",
+  delay = 0.55,
+  style,
+}: {
+  x: number;
+  feet: number;
+  fill?: string;
+  delay?: number;
+  style?: CSSProperties;
+}) {
   return (
-    <g stroke={color} strokeWidth={4} fill="none">
-      <circle cx={x} cy={y - 16} r={7} pathLength={1} style={draw(0.5)} />
+    <g style={style ?? pop(delay)}>
+      <ellipse cx={x} cy={feet + 3} rx={11} ry={3} fill="#000" opacity={0.18} />
       <path
-        d={`M${x} ${y - 9} L${x} ${y + 8} M${x} ${y - 4} L${x - 9} ${y + 2} M${x} ${y - 4} L${x + 9} ${y + 2} M${x} ${y + 8} L${x - 8} ${y + 20} M${x} ${y + 8} L${x + 8} ${y + 20}`}
-        pathLength={1}
-        style={draw(0.6)}
+        d={`M${x - 9} ${feet} C ${x - 10} ${feet - 22} ${x + 10} ${feet - 22} ${x + 9} ${feet} Z`}
+        fill={fill}
       />
+      <circle cx={x} cy={feet - 27} r={6.5} fill={fill} />
     </g>
   );
 }
 
-function CrossMark({
+// 빛나는 십자가 (둥근 막대 + 글로우)
+function Cross({
   cx,
   cy,
   s = 1,
-  color = C.gold,
-  delay = 0.2,
+  fill = "url(#g-gold)",
+  delay = 0.3,
 }: {
   cx: number;
   cy: number;
   s?: number;
-  color?: string;
+  fill?: string;
   delay?: number;
 }) {
+  const w = 6 * s;
   return (
-    <g stroke={color} strokeWidth={6} fill="none">
-      <line
-        x1={cx}
-        y1={cy - 26 * s}
-        x2={cx}
-        y2={cy + 30 * s}
-        pathLength={1}
-        style={draw(delay)}
-      />
-      <line
-        x1={cx - 18 * s}
-        y1={cy - 8 * s}
-        x2={cx + 18 * s}
-        y2={cy - 8 * s}
-        pathLength={1}
-        style={draw(delay + 0.35)}
-      />
+    <g filter="url(#soft)" style={pop(delay)}>
+      <rect x={cx - w / 2} y={cy - 30 * s} width={w} height={62 * s} rx={w / 2} fill={fill} />
+      <rect x={cx - 19 * s} y={cy - 11 * s} width={38 * s} height={w} rx={w / 2} fill={fill} />
     </g>
   );
 }
 
-function ground(yLeft: number, yRight: number) {
-  // 좌/우 절벽(다리예화)
+// 좌/우 절벽 (다리예화 공통). gap=깊은 골 강조 여부
+function Cliffs({ leftTop, rightTop }: { leftTop: number; rightTop: number }) {
   return (
     <>
+      {/* 깊은 골 */}
+      <path d={`M92 ${leftTop} L168 ${rightTop} L168 158 L92 158 Z`} fill="url(#g-chasm)" style={pop(0.05)} />
+      {/* 좌 절벽 (사람 편) */}
       <path
-        d={`M8 ${yLeft} L92 ${yLeft} L92 142 L8 142 Z`}
-        fill="rgba(245,241,232,0.06)"
-        stroke={C.parch}
-        strokeWidth={3}
+        d={`M10 ${leftTop} L92 ${leftTop} L92 158 L10 158 Z`}
+        fill="url(#g-cliff)"
+        stroke="url(#g-parch)"
+        strokeWidth={2.5}
         pathLength={1}
         style={draw(0.1)}
       />
+      <line x1={12} y1={leftTop} x2={90} y2={leftTop} stroke="#F5F1E8" strokeWidth={2} opacity={0.4} pathLength={1} style={draw(0.3)} />
+      {/* 우 절벽 (하나님 편, 살짝 높게) */}
       <path
-        d={`M168 ${yRight} L252 ${yRight} L252 142 L168 142 Z`}
-        fill="rgba(227,178,60,0.08)"
-        stroke={C.gold}
-        strokeWidth={3}
+        d={`M168 ${rightTop} L250 ${rightTop} L250 158 L168 158 Z`}
+        fill="url(#g-cliff)"
+        stroke="url(#g-gold)"
+        strokeWidth={2.5}
         pathLength={1}
         style={draw(0.25)}
       />
+      <line x1={170} y1={rightTop} x2={248} y2={rightTop} stroke="#E3B23C" strokeWidth={2} opacity={0.55} pathLength={1} style={draw(0.45)} />
     </>
   );
+}
+
+function Halo({ cx, cy, r, id = "halo-gold", style }: { cx: number; cy: number; r: number; id?: string; style?: CSSProperties }) {
+  return <circle cx={cx} cy={cy} r={r} fill={`url(#${id})`} style={style ?? glow()} />;
 }
 
 export default function Sketch({ k }: { k: string | null }) {
@@ -131,26 +191,22 @@ export default function Sketch({ k }: { k: string | null }) {
     case "circle":
       return (
         <Frame>
-          <circle cx={130} cy={72} r={50} fill={C.gold} opacity={0.16} style={{ ...pop(0.1), animation: "sk-glow 3.4s ease-in-out infinite" }} />
-          <circle cx={130} cy={72} r={44} stroke={C.gold} strokeWidth={5} pathLength={1} style={draw(0.15, 1.1)} />
-          {[0, 60, 120, 180, 240, 300].map((a, i) => {
-            const r1 = 54, r2 = 64;
+          <Halo cx={130} cy={76} r={62} />
+          <circle cx={130} cy={76} r={46} stroke="url(#g-gold)" strokeWidth={5} filter="url(#soft)" pathLength={1} style={draw(0.15, 1.2)} />
+          {[0, 45, 90, 135, 180, 225, 270, 315].map((a, i) => {
             const rad = (a * Math.PI) / 180;
             return (
-              <line
+              <circle
                 key={a}
-                x1={130 + r1 * Math.cos(rad)}
-                y1={72 + r1 * Math.sin(rad)}
-                x2={130 + r2 * Math.cos(rad)}
-                y2={72 + r2 * Math.sin(rad)}
-                stroke={C.gold}
-                strokeWidth={4}
-                pathLength={1}
-                style={pop(0.9 + i * 0.07)}
+                cx={130 + 60 * Math.cos(rad)}
+                cy={76 + 60 * Math.sin(rad)}
+                r={2.6}
+                fill="#F9E29B"
+                style={{ ...pop(0.9 + i * 0.06), animation: `sk-twinkle ${2.4 + (i % 3) * 0.5}s ease-in-out ${i * 0.2}s infinite` }}
               />
             );
           })}
-          <path d="M118 70 q12 -16 12 4 q0 -20 12 -4 q0 14 -12 22 q-12 -8 -12 -22 Z" fill={C.parch} opacity={0.85} style={pop(0.7)} />
+          <path d="M130 92 C118 80 116 66 126 64 c5 -1 4 6 4 6 c0 0 -1 -7 4 -6 c10 2 8 16 -4 28 Z" fill="url(#g-crimson)" filter="url(#soft)" style={pop(0.7)} />
         </Frame>
       );
 
@@ -158,17 +214,13 @@ export default function Sketch({ k }: { k: string | null }) {
     case "two-circles":
       return (
         <Frame>
-          <circle cx={72} cy={74} r={34} stroke={C.parch} strokeWidth={5} pathLength={1} style={draw(0.1)} />
-          <circle cx={188} cy={74} r={34} stroke={C.gold} strokeWidth={5} pathLength={1} style={draw(0.3)} />
-          <Person x={72} y={78} color={C.parch} />
-          <CrossMark cx={188} cy={74} s={0.7} delay={0.5} />
-          <path
-            d="M122 50 L132 70 L120 78 L134 98"
-            stroke={C.crimson}
-            strokeWidth={5}
-            pathLength={1}
-            style={draw(0.8, 0.6)}
-          />
+          <Halo cx={74} cy={80} r={40} id="halo-gold" style={{ ...glow(), opacity: 0.5 }} />
+          <Halo cx={186} cy={80} r={42} id="halo-gold" />
+          <circle cx={74} cy={80} r={34} stroke="url(#g-parch)" strokeWidth={5} pathLength={1} style={draw(0.1)} />
+          <circle cx={186} cy={80} r={34} stroke="url(#g-gold)" strokeWidth={5} filter="url(#soft)" pathLength={1} style={draw(0.3)} />
+          <Person x={74} feet={92} delay={0.6} />
+          <Cross cx={186} cy={80} s={0.62} delay={0.7} />
+          <path d="M120 52 L132 72 L118 84 L134 108" stroke="url(#g-crimson)" strokeWidth={5} filter="url(#soft)" pathLength={1} style={draw(0.9, 0.7)} />
         </Frame>
       );
 
@@ -176,24 +228,30 @@ export default function Sketch({ k }: { k: string | null }) {
     case "cross":
       return (
         <Frame>
-          <circle cx={130} cy={72} r={52} fill={C.gold} opacity={0.14} style={{ animation: "sk-glow 3.4s ease-in-out infinite" }} />
-          <CrossMark cx={130} cy={74} s={1.25} delay={0.15} />
+          <Halo cx={130} cy={78} r={66} />
+          {[ -1, 1 ].map((d) => (
+            <line key={d} x1={130} y1={78} x2={130 + d * 70} y2={78 - 40} stroke="#F9E29B" strokeWidth={2} opacity={0.25} style={{ ...pop(1), animation: "sk-twinkle 3s ease-in-out infinite" }} />
+          ))}
+          <Cross cx={130} cy={80} s={1.35} delay={0.2} />
         </Frame>
       );
 
-    // ── 보좌(마음)에 그리스도: 영접 ──
+    // ── 마음의 보좌에 그리스도: 영접 ──
     case "throne":
       return (
         <Frame>
+          <Halo cx={130} cy={74} r={58} id="halo-crimson" />
           <path
-            d="M130 118 C70 80 78 34 110 34 c12 0 18 9 20 16 c2 -7 8 -16 20 -16 c32 0 40 46 -20 84 Z"
-            stroke={C.crimson}
+            d="M130 126 C64 86 74 36 108 36 c12 0 18 9 22 17 c4 -8 10 -17 22 -17 c34 0 44 50 -22 90 Z"
+            fill="url(#g-crimson)"
+            fillOpacity={0.18}
+            stroke="url(#g-crimson)"
             strokeWidth={5}
-            fill="rgba(201,64,47,0.12)"
+            filter="url(#soft)"
             pathLength={1}
-            style={draw(0.1, 1.2)}
+            style={draw(0.1, 1.3)}
           />
-          <CrossMark cx={130} cy={70} s={0.8} color={C.gold} delay={0.9} />
+          <Cross cx={130} cy={72} s={0.8} delay={0.95} />
         </Frame>
       );
 
@@ -201,9 +259,10 @@ export default function Sketch({ k }: { k: string | null }) {
     case "two-sides":
       return (
         <Frame>
-          {ground(78, 64)}
-          <Person x={50} y={62} color={C.parch} />
-          <CrossMark cx={210} cy={44} s={0.6} delay={0.5} />
+          <Cliffs leftTop={96} rightTop={80} />
+          <Person x={50} feet={96} delay={0.6} />
+          <Halo cx={208} cy={58} r={34} />
+          <Cross cx={208} cy={56} s={0.6} delay={0.7} />
         </Frame>
       );
 
@@ -211,19 +270,11 @@ export default function Sketch({ k }: { k: string | null }) {
     case "gap":
       return (
         <Frame>
-          {ground(78, 64)}
-          <Person x={50} y={62} color={C.parch} />
-          <CrossMark cx={210} cy={44} s={0.6} delay={0.4} />
-          <path
-            d="M118 84 L128 104 L116 116 L130 138"
-            stroke={C.crimson}
-            strokeWidth={5}
-            pathLength={1}
-            style={draw(0.6, 0.7)}
-          />
-          <text x={130} y={30} fill={C.crimson} fontSize={15} textAnchor="middle" style={pop(1.2)} fontWeight="700">
-            ✕
-          </text>
+          <Cliffs leftTop={96} rightTop={80} />
+          <Halo cx={130} cy={130} r={40} id="halo-crimson" style={{ ...glow(2.8) }} />
+          <Person x={50} feet={96} delay={0.6} />
+          <Cross cx={208} cy={56} s={0.6} delay={0.7} />
+          <path d="M122 96 L132 116 L118 130 L130 152" stroke="url(#g-crimson)" strokeWidth={5} filter="url(#soft)" pathLength={1} style={draw(0.7, 0.8)} />
         </Frame>
       );
 
@@ -231,9 +282,16 @@ export default function Sketch({ k }: { k: string | null }) {
     case "bridge":
       return (
         <Frame>
-          {ground(78, 78)}
-          <line x1={88} y1={70} x2={172} y2={70} stroke={C.gold} strokeWidth={8} pathLength={1} style={draw(0.5, 0.8)} />
-          <line x1={130} y1={42} x2={130} y2={92} stroke={C.gold} strokeWidth={8} pathLength={1} style={draw(1.0, 0.5)} />
+          <Cliffs leftTop={90} rightTop={90} />
+          {/* 다리 그림자/반사 */}
+          <path d="M86 86 Q130 70 174 86" stroke="#000" strokeOpacity={0.25} strokeWidth={12} fill="none" style={pop(0.4)} />
+          {/* 십자가 가로보 = 다리 (살짝 아치) */}
+          <path d="M86 82 Q130 66 174 82" stroke="url(#g-gold)" strokeWidth={9} fill="none" filter="url(#soft)" pathLength={1} style={draw(0.5, 0.9)} />
+          {/* 세로기둥 */}
+          <rect x={126} y={40} width={8} height={52} rx={4} fill="url(#g-gold)" filter="url(#soft)" style={pop(1.1)} />
+          {[100, 130, 160].map((x, i) => (
+            <circle key={x} cx={x} cy={i === 1 ? 71 : 75} r={2.4} fill="#FCF3CF" style={{ animation: `sk-twinkle ${2.6 + i * 0.4}s ease-in-out ${1.3 + i * 0.2}s infinite` }} />
+          ))}
         </Frame>
       );
 
@@ -241,12 +299,13 @@ export default function Sketch({ k }: { k: string | null }) {
     case "cross-over":
       return (
         <Frame>
-          {ground(78, 78)}
-          <line x1={88} y1={70} x2={172} y2={70} stroke={C.gold} strokeWidth={8} pathLength={1} style={draw(0.3, 0.7)} />
-          <line x1={130} y1={44} x2={130} y2={92} stroke={C.gold} strokeWidth={8} pathLength={1} style={draw(0.7, 0.4)} />
-          <g style={{ animation: "sk-cross 2.6s ease-in-out 1s infinite" }}>
-            <circle cx={120} cy={52} r={7} fill={C.green} />
-            <path d="M120 59 L120 74 M120 64 L112 70 M120 64 L128 70" stroke={C.green} strokeWidth={4} />
+          <Cliffs leftTop={90} rightTop={90} />
+          <path d="M86 82 Q130 66 174 82" stroke="url(#g-gold)" strokeWidth={9} fill="none" filter="url(#soft)" pathLength={1} style={draw(0.3, 0.8)} />
+          <rect x={126} y={40} width={8} height={52} rx={4} fill="url(#g-gold)" filter="url(#soft)" style={pop(0.9)} />
+          <Halo cx={210} cy={70} r={32} id="halo-green" />
+          {/* 건너가는 사람 */}
+          <g style={{ animation: "sk-cross 3.4s cubic-bezier(0.4,0,0.4,1) 1s infinite" }}>
+            <Person x={94} feet={74} fill="url(#g-green)" style={{ opacity: 1 }} />
           </g>
         </Frame>
       );
@@ -255,11 +314,13 @@ export default function Sketch({ k }: { k: string | null }) {
     case "circle-broken":
       return (
         <Frame>
-          <path d="M130 28 A44 44 0 0 1 130 116" stroke={C.muted} strokeWidth={5} pathLength={1} style={draw(0.1)} />
-          <g transform="translate(-9 6) rotate(-8 130 72)">
-            <path d="M130 28 A44 44 0 0 0 130 116" stroke={C.muted} strokeWidth={5} pathLength={1} style={draw(0.35)} />
+          <g transform="translate(7 -5) rotate(7 130 78)">
+            <path d="M130 32 A46 46 0 0 1 130 124" stroke="#938CA8" strokeWidth={5} pathLength={1} style={draw(0.1)} />
           </g>
-          <path d="M132 22 L120 60 L140 78 L126 122" stroke={C.crimson} strokeWidth={5} pathLength={1} style={draw(0.7, 0.8)} />
+          <g transform="translate(-8 6) rotate(-9 130 78)">
+            <path d="M130 32 A46 46 0 0 0 130 124" stroke="#7A7392" strokeWidth={5} pathLength={1} style={draw(0.35)} />
+          </g>
+          <path d="M133 24 L118 60 L142 80 L124 132" stroke="url(#g-crimson)" strokeWidth={5} filter="url(#soft)" pathLength={1} style={draw(0.7, 0.9)} />
         </Frame>
       );
 
@@ -267,9 +328,15 @@ export default function Sketch({ k }: { k: string | null }) {
     case "circle-gospel":
       return (
         <Frame>
-          <circle cx={130} cy={72} r={50} fill={C.green} opacity={0.14} style={{ animation: "sk-glow 3.4s ease-in-out infinite" }} />
-          <circle cx={130} cy={72} r={44} stroke={C.green} strokeWidth={5} pathLength={1} style={draw(0.15, 1.2)} />
-          <CrossMark cx={130} cy={72} s={0.78} color={C.gold} delay={1.0} />
+          <Halo cx={130} cy={78} r={62} id="halo-green" />
+          <circle cx={130} cy={78} r={46} stroke="url(#g-green)" strokeWidth={5} filter="url(#soft)" pathLength={1} style={draw(0.15, 1.3)} />
+          {[30, 90, 150, 210, 270, 330].map((a, i) => {
+            const rad = (a * Math.PI) / 180;
+            return (
+              <line key={a} x1={130 + 50 * Math.cos(rad)} y1={78 + 50 * Math.sin(rad)} x2={130 + 60 * Math.cos(rad)} y2={78 + 60 * Math.sin(rad)} stroke="#9BDCB4" strokeWidth={2.4} style={{ ...pop(1 + i * 0.08), animation: `sk-twinkle ${2.6 + (i % 2) * 0.6}s ease-in-out ${i * 0.15}s infinite` }} />
+            );
+          })}
+          <Cross cx={130} cy={78} s={0.78} delay={1} />
         </Frame>
       );
 
@@ -277,23 +344,19 @@ export default function Sketch({ k }: { k: string | null }) {
     case "arrows":
       return (
         <Frame>
-          <circle cx={150} cy={74} r={30} stroke={C.green} strokeWidth={5} pathLength={1} style={draw(0.6)} />
-          <CrossMark cx={150} cy={74} s={0.5} color={C.gold} delay={1.0} />
-          <path
-            d="M96 110 C58 96 58 52 96 38"
-            stroke={C.violet}
-            strokeWidth={5}
-            pathLength={1}
-            style={draw(0.1, 0.9)}
-          />
-          <path d="M96 38 L82 40 M96 38 L92 52" stroke={C.violet} strokeWidth={5} pathLength={1} style={draw(1.0, 0.3)} />
+          <Halo cx={158} cy={80} r={34} id="halo-green" />
+          <circle cx={158} cy={80} r={28} stroke="url(#g-green)" strokeWidth={5} filter="url(#soft)" pathLength={1} style={draw(0.7)} />
+          <Cross cx={158} cy={80} s={0.5} delay={1.1} />
+          <path d="M104 122 C56 104 56 50 102 34" stroke="url(#g-violet)" strokeWidth={6} fill="none" filter="url(#soft)" pathLength={1} style={draw(0.1, 1)} />
+          <path d="M102 34 L86 34 M102 34 L100 50" stroke="url(#g-violet)" strokeWidth={6} pathLength={1} style={draw(1.05, 0.35)} />
         </Frame>
       );
 
     default:
       return (
         <Frame>
-          <circle cx={130} cy={72} r={44} stroke={C.gold} strokeWidth={5} pathLength={1} style={draw(0.15, 1.1)} />
+          <Halo cx={130} cy={78} r={60} />
+          <circle cx={130} cy={78} r={46} stroke="url(#g-gold)" strokeWidth={5} filter="url(#soft)" pathLength={1} style={draw(0.15, 1.2)} />
         </Frame>
       );
   }
